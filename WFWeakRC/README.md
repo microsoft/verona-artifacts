@@ -1,4 +1,4 @@
-# Wait-free weak reference counting
+# Wait-free Weak Reference Counting
 
 Repo containing the Supporting evidence for the Wait-free Weak Reference counting algorithm.
 
