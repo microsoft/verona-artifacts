@@ -1,6 +1,6 @@
 # Wait-free Weak Reference Counting
 
-Repo containing the Supporting evidence for the [Wait-free Weak Reference counting algorithm paper]() https://www.microsoft.com/en-us/research/?p=937314).
+Repo containing the Supporting evidence for the [Wait-free Weak Reference counting algorithm paper](  https://www.microsoft.com/en-us/research/publication/wait-free-weak-reference-counting/).
 
 The repo is structured as follows:
 
