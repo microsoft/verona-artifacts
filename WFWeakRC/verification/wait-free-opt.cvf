@@ -1,0 +1,390 @@
+/**
+ * The strong reference count
+ */
+shared int strong;
+
+/*
+ * The weak reference count
+ */
+shared int weak;
+
+/*
+ * Has the structure been destructed
+ */
+shared bool destructed;
+
+/*
+ * Has the structure been deallocated
+ */
+shared bool deallocated;
+
+/**
+ * This is a mark bit added to the reference count.
+ */ 
+shared bool closed;
+
+/*
+ * Also added to the reference count, to mark whether `weak` is valid.
+ */
+shared bool weak_bit;
+
+shared bool ghost_using_weakrefs;
+
+shared int ghost_strongreferences;
+shared int ghost_weakreferences;
+shared int ghost_weakrefs_closed;
+
+shared int ghost_weakrefs_shared;
+
+shared int ghost_strongrefs_notset;
+shared int ghost_strongrefs_weaknotzero;
+
+thread bool success;
+thread bool lost_weak;
+thread bool last;
+thread int old_strong;
+thread int old_weak;
+thread bool old_weak_bit;
+thread bool old_closed;
+
+/* StrongRef variants */
+view iter StrongRef;
+view iter StrongRefWeakBitNotSet;
+view iter StrongRefWeakNZ;
+
+/* A bunch of different WeakRef views */
+view iter WeakRef;
+view iter WeakRefClosed;
+view iter WeakRefShared;
+
+view CanDestruct;
+view Dealloc;
+view EnabledWeakrefs;
+view Closed;
+
+method acquire_strong()
+{
+  {| StrongRef |} <| strong++; ghost_strongreferences++; |> {| StrongRef * StrongRef |}
+}
+
+method release_strong()
+{
+  {| StrongRef |}
+
+  // auto old = strong.fetch_sub(SINGLE_RC);
+  <|
+    old_strong = strong;
+    old_weak_bit = weak_bit;
+    strong--;
+    ghost_strongreferences--;
+    last = (old_strong == 1);
+
+    if (last && old_weak_bit) {
+      ghost_weakrefs_shared++;
+    }
+  |>
+
+  {| if (last && old_weak_bit) { WeakRefShared } * if (last && !old_weak_bit) { CanDestruct } |}
+
+  // if (old > (SINGLE_RC + WEAK)) return;
+  if (!last) {
+      {| emp |}
+  } else {
+      {| if (old_weak_bit) { WeakRefShared } else { CanDestruct } |}  // must have been last
+
+      // if ((old & WEAK) == 0)
+      if (old_weak_bit == false) {
+        {| CanDestruct |}
+        <| destructed = true; |>  // body.~T();
+        // TODO: free(this);
+        {| emp |}
+      } else {
+        {| WeakRefShared |}
+
+        // CAS(strong|weak_bit|closed, 0|1|0, 0|0|1)
+        <|
+          success = (strong == 0) && (weak_bit == true) && (closed == false);
+          if (success) {
+            strong = 0;
+            weak_bit = false;
+            closed = true;
+            ghost_weakrefs_closed++;
+          } else {
+            ghost_weakreferences++;
+          }
+          ghost_weakrefs_shared--;
+        |>
+
+        {| if success { WeakRefClosed } else { WeakRef } |}
+        if (success) {
+          {| WeakRefClosed |}
+          <| destructed = true; ghost_weakrefs_closed--; ghost_weakreferences++; |>  // body.~T();
+          {| WeakRef |}
+        }
+
+        {| WeakRef |}
+        // starling has no function calls
+        // but here is where the code calls
+        // release_weak();
+        {| emp |}
+      }
+  }
+}
+
+method acquire_weak_from_weak()
+{
+  {| WeakRef |} <| weak++; ghost_weakreferences++; |> {| WeakRef * WeakRef |}
+}
+
+method acquire_weak_from_strong()
+{
+  {| StrongRef |}
+  <|
+    old_weak = weak;
+    if (old_weak >= 1) {
+      ghost_strongreferences--;
+      ghost_strongrefs_weaknotzero++;
+    }
+  |>
+  {| if (old_weak < 1) { StrongRef } else { StrongRefWeakNZ } |}
+
+  if (old_weak < 1) {
+    {| StrongRef |}
+
+    // CAS(weak, 0, 2)
+    <|
+      old_weak = weak;
+      if (weak < 1) {
+        weak = 2;
+        success = true;
+        ghost_using_weakrefs=true;
+        ghost_strongrefs_notset++;
+      } else {
+        success = false;
+        ghost_strongrefs_weaknotzero++;
+      }
+      ghost_strongreferences--;
+    |>
+    {| if success { StrongRefWeakBitNotSet } else { StrongRefWeakNZ }  |}
+    if (success) {
+      {| StrongRefWeakBitNotSet |}
+      <| weak_bit = true; ghost_strongrefs_notset--; ghost_strongreferences++; ghost_weakreferences++; |> // strong += WEAK;
+      {| StrongRef * WeakRef |}
+    } else {
+      {| StrongRefWeakNZ |} <| weak++; ghost_weakreferences++; ghost_strongrefs_weaknotzero--; ghost_strongreferences++; |> {| StrongRef * WeakRef |}
+    }
+  } else {
+    {| StrongRefWeakNZ |} <| weak++; ghost_strongrefs_weaknotzero--; ghost_strongreferences++; ghost_weakreferences++; |> {| StrongRef * WeakRef |}
+  }
+}
+
+method release_weak()
+{
+  {| WeakRef |}
+
+  // if ((weak == 1) || (--weak == 0)) free(this);
+  <| weak--; ghost_weakreferences--; last = weak == 0; |>
+  {| if last { Dealloc } |}
+  if (last)
+  {
+    {| Dealloc |}
+      <| deallocated = true; |>
+    {| emp |}
+  }
+}
+
+/**
+  This has two returns 
+    success    signifies we successfully acquired a StrongRef
+    lost_weak  signifies we lost our weak reference in the acquisition.
+
+  This corresponds to Object::acquire_strong_from_weak in object.h
+ */
+method acquire_strong_from_weak()
+{
+  {| WeakRef |}
+
+  // auto old = strong.fetch_add(SINGLE_RC);
+  <|
+    old_strong = strong;
+    old_closed = closed;
+    strong++;
+    success = !closed;
+    lost_weak = (success && old_strong == 0);
+
+    if (lost_weak) {
+      ghost_weakreferences--;
+    }
+
+    if success {
+      ghost_strongreferences++;
+    }
+  |>
+
+  {| if (success) { StrongRef } * if (!lost_weak) { WeakRef } |}
+
+  // starling has no function calls
+  // but here is where the code calls
+  // if lost_weak {
+  //   {| StrongRef |}
+  //   acquire_weak_from_strong();
+  //   {| StrongRef * WeakRef |}
+  // }
+  //
+  // {| WeakRef * if success { StrongRef } |}
+}
+
+// Invariant
+// this enforces some relationships between the variables which must be true at all points in the program, regardless of what knowledge (views) the proof believes it has.
+constraint emp ->
+  strong >= 0
+  && weak >= 0
+  && ((!closed && weak_bit) => !destructed)
+  && (weak > 0 => (!deallocated && ghost_using_weakrefs))
+  && (deallocated => destructed)
+  && (weak_bit => weak > 0)
+  && closed => !weak_bit
+
+  && (weak > 0 && destructed) => closed
+
+  && ghost_weakreferences >= 0
+  && ghost_strongreferences >= 0
+  && ghost_strongrefs_weaknotzero >= 0
+  && ghost_strongrefs_notset >= 0
+  && ghost_weakrefs_closed >= 0
+  && ghost_weakrefs_shared >= 0
+
+  && closed => ghost_strongreferences + ghost_strongrefs_notset + ghost_strongrefs_weaknotzero == 0
+
+  // if `strong` was incremented but we didn't get a StrongRef, then it must have been closed.
+  && strong > ghost_strongreferences + ghost_strongrefs_notset + ghost_strongrefs_weaknotzero => closed
+
+  // if closed, but not yet destructed, then we must know WeakRefClosed
+  && (closed && !destructed) => ghost_weakrefs_closed > 0
+
+  // {| StrongRef |}
+  && ghost_strongreferences > 0
+  => (
+    !closed
+    && !destructed
+    && weak_bit => weak > 0
+  )
+
+  // {| StrongRefWeakBitNotSet |}
+  && ghost_strongrefs_notset == 1 => (
+    !weak_bit
+    && !closed
+  )
+
+  // {| StrongRefWeakNZ * WeakRef[] |}
+  && ghost_strongrefs_weaknotzero > 0 => (
+    weak > ghost_weakreferences
+    && !closed
+  )
+
+  // {| StrongRef[] * StrongRefWeakBitNotSet[] * StrongRefWeakNZ[] |}
+  && strong >= ghost_strongreferences + ghost_strongrefs_notset + ghost_strongrefs_weaknotzero
+
+  // {| WeakRefClosed |}
+  && ghost_weakrefs_closed > 0 => (
+    closed
+    && !destructed
+  )
+
+  // {| StrongRef[] * WeakRef[] * StrongRefWeakBitNotSet[] |}
+  && (ghost_strongrefs_notset > 0) => (
+    strong >= ghost_strongreferences + ghost_strongrefs_notset
+    && ghost_using_weakrefs
+    && weak > ghost_weakreferences + 1
+  )
+
+  // {| WeakRef[] * WeakRefShared[] * WeakRefClosed[] |}
+  && weak >= ghost_weakreferences + ghost_weakrefs_shared + ghost_weakrefs_closed
+
+  // {| StrongRef[] * StrongRefWeakNZ[] * StrongRefWeakBitNotSet[] |}
+  && (ghost_strongrefs_notset > 0) => (
+    strong >= ghost_strongreferences + ghost_strongrefs_weaknotzero + ghost_strongrefs_notset
+  )
+
+  // {| StrongRefWeakBitNotSet[] * WeakRef[] * WeakRefShared[] |}
+  && ghost_strongreferences > 0 => (
+    (weak > 0 => (weak_bit || ghost_strongrefs_notset > 0))
+    && (weak_bit => (weak > ghost_weakreferences + ghost_weakrefs_shared))
+  )
+
+  // {| WeakRef[] * StrongRef[] * WeakRefShared[] * StrongRefWeakBitNotSet[] * StrongRefWeakNZ[] * WeakRefClosed[] |}
+  && ghost_weakreferences > 0 => (
+    (weak_bit && 0 < ghost_strongreferences + ghost_strongrefs_notset + ghost_strongrefs_weaknotzero && weak > ghost_weakreferences + ghost_weakrefs_shared + ghost_weakrefs_closed)
+    || (weak_bit && ghost_weakrefs_shared > 0)
+    || (!weak_bit && (closed || ghost_strongrefs_notset > 0))
+  )
+
+  // {| WeakRefShared |}
+  && ghost_weakrefs_shared > 0 => (
+    (weak_bit && !closed)
+    || (!weak_bit && closed)
+  )
+
+  // {| StrongRefWeakNZ[] * StrongRefWeakBitNotSet[] * WeakRef[] * WeakRefShared[] |}
+  && ghost_strongrefs_weaknotzero > 0 => (
+    (!weak_bit => ghost_strongrefs_notset > 0)
+    && (weak_bit => (weak > ghost_weakreferences + ghost_weakrefs_shared))
+  )
+
+  // {| WeakRefClosed * WeakRefClosed |}
+  && ghost_weakrefs_closed <= 1
+
+  // {| StrongRefWeakBitNotSet * StrongRefWeakBitNotSet |}
+  && ghost_strongrefs_notset <= 1
+
+  // {| StrongRefWeakBitNotSet * WeakRefClosed |}
+  && ghost_weakrefs_closed > 0 => ghost_strongrefs_notset == 0
+
+  // {| StrongRefWeakBitNotSet * WeakRefShared |}
+  && ghost_strongrefs_notset > 0 => ghost_weakrefs_shared == 0
+
+  // {| WeakRefClosed * StrongRefWeakNZ |}
+  && ghost_strongrefs_weaknotzero > 0 => ghost_weakrefs_closed == 0
+  ;
+
+constraint CanDestruct ->
+  strong == 0
+  && !weak_bit
+  && !destructed
+  && weak == 0
+  ;
+
+constraint Dealloc ->
+     !deallocated
+  && destructed
+  && !weak_bit
+  && weak == 0
+  ;
+
+/* Linearity:
+ * Two concurrent calls should not be allowed to destroy or deallocate at the same time.
+ */
+constraint Dealloc * Dealloc -> false;
+constraint CanDestruct * CanDestruct -> false;
+constraint CanDestruct * Dealloc -> false;
+
+constraint iter[n] StrongRef ->
+  ghost_strongreferences >= n;
+
+constraint iter[n] WeakRef ->
+  ghost_weakreferences >= n;
+
+constraint iter[n] WeakRefClosed ->
+  ghost_weakrefs_closed >= n;
+
+constraint iter[n] WeakRefShared ->
+  ghost_weakrefs_shared >= n;
+
+constraint iter[n] StrongRefWeakBitNotSet ->
+  ghost_strongrefs_notset >= n;
+
+constraint iter[n] StrongRefWeakNZ ->
+  ghost_strongrefs_weaknotzero >= n;
+
+constraint EnabledWeakrefs -> ghost_using_weakrefs;
+constraint Closed -> closed;
