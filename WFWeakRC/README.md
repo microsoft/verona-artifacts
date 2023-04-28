@@ -12,7 +12,7 @@ The repo is structured as follows:
 
 ## Building the code
 
-Pre-requistes: cmake, ninja-build and clang.
+Pre-requisites: CMake, ninja-build and clang.
 
 To build
 ```
