@@ -18,7 +18,7 @@ Then run the docker image:
 ```
 mkdir artifact
 cd artifact
-docker run -v .:/artifact/outputs -it verona-when
+docker run -v $PWD:/artifact/outputs -it verona-when
 ```
 
 From inside the docker image, to run the Savina benchmarks for both Pony and Verona, run the following command:
