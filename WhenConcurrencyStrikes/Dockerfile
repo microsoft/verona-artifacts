@@ -4,7 +4,9 @@ ARG USERNAME=verona
 # Install dependencies
 RUN apt update \
     && apt upgrade -y \
-    && DEBIAN_FRONTEND=noninteractive apt install -y cmake ninja-build llvm-12 clang-12 lld-12 git lsb-release curl sudo pip cloc
+    && DEBIAN_FRONTEND=noninteractive apt install -y cmake ninja-build \
+        llvm-12 clang-12 lld-12 git lsb-release curl sudo pip cloc \
+        linux-tools-5.15.0-76
 
 # Install Python dependencies
 RUN pip install psutil plotly pandas kaleido
@@ -29,7 +31,8 @@ RUN git clone https://github.com/Microsoft/verona-rt.git \
     && git checkout 19c01dff5e6abc60d8c56998c66fbfa8f2f9be81 \
     && mkdir build \
     && cd build \
-    && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-12 -DCMAKE_CXX_COMPILER=clang++-12 .. \
+    && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-12 \
+            -DCMAKE_CXX_COMPILER=clang++-12 .. \
     && ninja test/perf-con-dining_phil
 
 # Build Verona Savina benchmarks
@@ -58,6 +61,7 @@ RUN export CC=/usr/bin/clang-12 \
     && cd savina-pony \
     && $HOME/.local/share/ponyup/bin/ponyc
 
+# Put the instructions into the container.
 COPY README.md README.md
 
 ENV SHELL /bin/bash

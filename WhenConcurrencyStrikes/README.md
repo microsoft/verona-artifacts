@@ -8,13 +8,16 @@ The instructions assume a working Docker installation:
 
 First build the Docker image:
 ```
-docker build -t verona-when
+docker build -t verona-when .
 ```
+[This step should take about 3 minutes.]
+
+Note that the Docker build step will install all the necessary packages, and build the various benchmarks.  It does not run any benchmarks.
 
 Then run the docker image:
 ```
-mkdir verona-artifact
-cd verona-artifact
+mkdir artifact
+cd artifact
 docker run -v .:/artifact/outputs -it verona-when
 ```
 
@@ -25,16 +28,18 @@ python3 verona-benchmarks/scripts/run_savina.py -o outputs \
   --pony-path pony-savina/savina-pony \
   --repeats 2
 ```
-[You can increase the number of repeats to get more accurate results, but it will take longer to run.]
+You can increase the number of repeats to get more accurate results, but it will take longer to run. This configuration should take 4-6 minutes to run.
 
-To run the dining philosophers benchmark for both Verona and std::lock, run the following command:
+This script will generate a series of `csv` files in the `outputs` directory.
+
+To run the dining philosophers benchmark for both Verona and `std::lock`, run the following command:
 ```
 python3 verona-benchmarks/scripts/run_dining.py -o outputs \
   --verona-path verona-rt/build/test \
   --repeats 2 \
   --fast
 ```
-The `--fast` option runs the benchmarks with fewer iterations, to make it faster to run.  To get more accurate results as used in teh paper, remove this option.
+The `--fast` option runs the benchmarks with fewer iterations, to make it faster to run.  To get more accurate results as used in the paper, remove this option.
 
 [TODO 2PC pony benchmark]
 
@@ -75,3 +80,55 @@ Note that if you have used `--fast` on the `run_dining.py` script, you will need
 ```
 python3 verona-benchmarks/scripts/produce_graph_dining.py -i $RESULTS_DIR -o outputs --fast
 ```
+This should take about 4 minutes to run.
+
+## Finding components
+
+Inside the Docker image you can find
+
+* verona-rt: a checkout of the runtime implementation
+* verona-benchmarks: a checkout of the Savina benchmark suite written in against the C++ BoC library.
+* pony-savina: a checkout of the Savina benchmark suite written in Pony.
+
+### Verona-rt
+
+The most useful components in
+
+* `verona-rt/test/func/simp*` contains a series of variable simple tests to illustrate the use of the C++ API for BoC.
+* `verona-rt/docs/internal/concurrency/modelimpl/` contains the C# model implementation that is presented in the paper.
+* `verona-rt/src/rt/sched/behaviourcore.h` contains the core C++ algorithms as described in the paper.
+
+### Verona-benchmarks
+
+* `verona-benchmarks/savina/actors/` contains the implementations of the Savina benchmarks using only single cown `when`.
+* `verona-benchmarks/savina/boc` contains the implementation of the Savina benchmarks using multi-cown `when`.
+* `verona-benchmarks/results/` contains the results used to generate the graphs and tables in the paper.
+* `verona-benchmarks/scripts/` contains the scripts used to generate the graphs and tables in the paper.
+
+### Pony Savina
+
+* `pony-savina/savina-pony` contains the implementation of the Savina benchmarks in Pony.
+
+## Running individual benchmarks
+
+## Profiling benchmarks
+
+It is useful to be able to run individual benchmarks for profiling.
+
+Firstly, to run `perf` inside the Docker image it needs to be started with `--privileged`:
+```
+docker run --privileged -v .:/artifact/outputs -it verona-when
+```
+
+Then you can run the profiling for a particular benchmark as follows:
+```
+sudo /usr/lib/linux-tools-5.15.0-76/perf record verona-benchmarks/build/savina/savina --actor
+ --benchmark "Banking"
+```
+The results can then be viewed with:
+```
+sudo /usr/lib/linux-tools-5.15.0-76/perf report
+```
+
+This can be used to verify the various comments about
+that causes of slowdown in the paper.
