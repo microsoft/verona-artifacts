@@ -139,7 +139,7 @@ It is useful to be able to run individual benchmarks for profiling.
 
 Firstly, to run `perf` inside the Docker image it needs to be started with `--privileged`:
 ```
-docker run --privileged -v .:/artifact/outputs -it verona-when
+docker run --privileged -v $PWD:/artifact/outputs -it verona-when
 ```
 
 Then you can run the profiling for a particular benchmark as follows our runtime as follows:
