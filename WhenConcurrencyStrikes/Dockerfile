@@ -6,7 +6,7 @@ RUN apt update \
     && apt upgrade -y \
     && DEBIAN_FRONTEND=noninteractive apt install -y cmake ninja-build \
         llvm-12 clang-12 lld-12 git lsb-release curl sudo pip cloc \
-        linux-tools-5.15.0-76
+        linux-tools-5.15.0-76 libc6-dbg 
 
 # Install Python dependencies
 RUN pip install psutil plotly pandas kaleido
@@ -40,7 +40,7 @@ RUN git clone https://github.com/ic-slurp/verona-benchmarks.git \
     && cd verona-benchmarks \
     && mkdir build \
     # Note use Commit hash to avoid malleablity
-    && git checkout 70f74cb1c022b459e7c9e79bf3b77f034eef49a0 \
+    && git checkout ba849ca2cbe714b1bf79b39f3b8c80384682a326 \
     && cd build \
     && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-12 -DCMAKE_CXX_COMPILER=clang++-12 .. \
     && ninja
@@ -63,6 +63,9 @@ RUN export CC=/usr/bin/clang-12 \
 
 # Put the instructions into the container.
 COPY README.md README.md
+
+# Put the existing results into the container.
+COPY results results
 
 ENV SHELL /bin/bash
 CMD /bin/bash
