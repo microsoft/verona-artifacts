@@ -1,0 +1,13 @@
+benchmark,mean,median,error
+Banking,9.25718,8.955,4.4539
+Sleeping Barber,16.5466,17.612,10.1822
+Concurrent Dictionary,73.5171,74.714,1.01146
+Dining Philosophers,16.6476,16.1395,0.785617
+Logistic Map Series,19.7859,21.3775,0.935162
+Chameneos,122.133,122.363,1.74837
+Count,46.9047,46.3885,0.5646
+Fib,13.5358,13.4065,0.803965
+Fork-Join Create,11.8395,11.8025,0.294756
+Fork-Join Throughput,45.8013,44.57,2.23536
+Quicksort,78.6166,78.3125,0.360959
+Trapezoid,172.569,173.978,0.142833

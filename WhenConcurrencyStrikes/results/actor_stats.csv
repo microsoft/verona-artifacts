@@ -1,0 +1,23 @@
+SchedulerStats,Tag,DumpID,Steal,LIFO,Pause,Unpause,Cown count,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+SchedulerStats,Banking,0,0,1,1,0,1001,0,252407,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Sleeping Barber,1,0,1,1,1,5003,0,24027388,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Bounded Buffer,2,0,1,1,1,81,0,160081,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Cigarette Smokers,3,0,1,1,1,201,0,3001,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Concurrent Dictionary,4,0,1,1,1,22,0,400041,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Dining Philosophers,5,0,20,1,1,21,0,1350118,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Logistic Map Series,6,0,1,1,1,21,0,750022,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Concurrent Sorted Linked-List,7,0,20,1,1,22,0,320000,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Big,8,0,1,1,1,121,0,4800481,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Chameneos,9,0,1,1,1,101,0,800300,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Count,10,0,1,1,1,2,0,1000002,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Fib,11,0,1,1,1,150049,0,300097,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Fork-Join Create,12,0,40000,1,1,40001,0,80000,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Fork-Join Throughput,13,0,60,1,1,61,0,1200000,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Ping Pong,14,0,1,1,1,2,0,80000,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Thread Ring,15,0,1,1,1,100,0,100002,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Filterbank,16,0,1,1,1,62,0,1419325,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Quicksort,17,0,1,1,1,1935,0,3869,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Radixsort,18,0,1,1,1,61,0,6100000,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Recursive Matrix Multiplication,19,0,1,1,1,22,0,2267,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Sieve of Eratosthenes,20,0,1,1,1,10,0,91328,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SchedulerStats,Trapezoid,21,0,1,1,1,101,0,201,0,0,0,0,0,0,0,0,0,0,0,0,0,0

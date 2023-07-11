@@ -1,0 +1,23 @@
+benchmark,mean,median,error
+Banking,19.8169,19.3205,0.637663
+Sleeping Barber,1659.5,1650.9,0.122306
+Bounded Buffer,1593.14,1585.06,0.146106
+Cigarette Smokers,0.70059,0.6875,0.429109
+Concurrent Dictionary,22.7396,23.293,0.302062
+Dining Philosophers,73.2954,73.1295,0.247138
+Logistic Map Series,39.0272,39.837,0.442783
+Concurrent Sorted Linked-List,6205.74,6181.02,0.102982
+Big,247.155,246.769,0.216136
+Chameneos,46.1052,46.042,0.246285
+Count,46.0962,45.902,0.364269
+Fib,29.2503,29.937,0.325511
+Fork-Join Create,10.4765,10.4085,0.350061
+Fork-Join Throughput,53.4114,55.15,0.881017
+Ping Pong,4.60384,4.622,0.526322
+Thread Ring,4.65735,4.7865,0.583423
+Filterbank,1170.03,1162.68,0.147521
+Quicksort,124.747,125.89,0.289261
+Radixsort,235.823,234.427,0.217821
+Recursive Matrix Multiplication,1614.38,1609.89,0.101638
+Sieve of Eratosthenes,330.747,330.715,0.164533
+Trapezoid,969.999,970.366,0.121928
