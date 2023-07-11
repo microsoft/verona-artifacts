@@ -2,7 +2,13 @@
 
 This contains the supporting artifact to the paper "When Concurrency Strikes."  The artifact is a Docker script that compares the performance of Pony with the BoC C++ library using the Savina benchmarks suite.
 
-## Running the benchmarks
+
+## Getting started
+
+This section should be able to generate an approximation of the main claims in the paper in under 30 minutes. If this works, then we expect the rest of the artifact to work.  The more complex tests are explained in subsequent sections.
+
+### Running the benchmarks
+
 The instructions assume a working Docker installation and local installation of Git.
 
 First, checkout the artifact repo from Github:
@@ -25,6 +31,7 @@ mkdir artifact
 cd artifact
 docker run -v $PWD:/artifact/outputs -it verona-when
 ```
+This will run Docker with the locally created artifact directory map to `outputs`.  All the scripts below will generate their output in this directory, and hence can be inspected from outside the Docker image.
 
 From inside the docker image, to run the Savina benchmarks for both Pony and Verona, run the following command:
 ```
@@ -52,8 +59,9 @@ The final benchmark run is done manually.  This is the Pony Reasonable Banking b
 ```
 There is no corresponding requirement for the BoC benchmark, as the Banking example as implemented in BoC automatically satisfies all the requirements. 
 
+To run to the same level of accuracy as the paper, you should increase the number of repeats to 50 for all the scripts above.  This will increase the time taken significantly. This will take roughly 25 times longer to run.
 
-## Generating the graphs and tables
+### Generating the graphs and tables
 
 The artifact contains already run benchmarks results, that can be directly used to generate the graphs and tables.  To use the results from the previous section:
 ```
@@ -92,7 +100,12 @@ python3 verona-benchmarks/scripts/produce_graph_dining.py -i $RESULTS_DIR -o out
 ```
 This should take about 4 minutes to run.
 
-## Running individual benchmarks
+## More advance usages
+
+The previous section automated all the running of benchmarks.  This section explains 
+how to manually run various aspects of the runtime. 
+
+### Running individual benchmarks
 
 Both the Pony and Verona benchmarks can be run individually. 
 ```
@@ -113,7 +126,7 @@ verona-benchmarks/build/savina/savina --full --benchmark "Recursive Matrix Multi
 You can increase the number of runs with the `--reps [n]` option. You can output in a machine-readable format with the `--csv` option.
 
 
-## Profiling benchmarks
+### Profiling benchmarks
 
 It is useful to be able to run individual benchmarks for profiling.
 
