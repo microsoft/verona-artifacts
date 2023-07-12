@@ -196,3 +196,8 @@ The most useful components in
 
 * `pony-savina/savina-pony` contains the implementation of the Savina benchmarks in Pony.
 
+
+
+## Latex tables
+
+The generated output from the scripts for the tables is in Latex.  This is not particular readable.  We include a LaTeX wrapper file in `latex/table_wrapper.tex` in the artifact git repo, that can be used to build a document containing the tables. 
