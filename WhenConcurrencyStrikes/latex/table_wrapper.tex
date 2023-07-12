@@ -1,0 +1,74 @@
+\documentclass{acmart}
+
+\usepackage{array}
+\usepackage{multicol}
+
+\begin{document}
+
+\begin{table}
+  \caption{Average runtime (ms) on Savina benchmarks. Parenthesised values give logarithm relative overheads to single core Pony, $\log(\frac{x}{\textsf{1 core Pony}})$.}
+  \begin{footnotesize}\setlength{\tabcolsep}{1.1ex}
+    \begin{tabular}{
+      l|
+      r@{\,$\pm$\,}l
+      r@{\,$\pm$\,}lc|
+      r@{\,$\pm$\,}lc
+      r@{\,$\pm$\,}lc
+      rr
+      }
+\toprule
+      &
+      \multicolumn{5}{c|}{\textsf{Pony}} &
+      \multicolumn{8}{c}{\textsf{BoC (Actor)}}\\
+      \textsf{Benchmark} &
+       \multicolumn{2}{c}{1 core} & 
+       \multicolumn{3}{c|}{8 cores}&
+       \multicolumn{3}{c}{1 core} & \multicolumn{3}{c}{8 cores}&
+       \ cowns\ &
+       behaviours\\
+      \midrule
+    \input{../artifact/table1_pony_boc.tex}
+\\ \bottomrule
+  \end{tabular}
+  \label{tbl:savina:results}
+\end{footnotesize}
+\end{table}
+
+\begin{table}[h]
+    \caption{Average runtime (ms) on selected Savina benchmarks}
+    \vspace{-1em}
+    \begin{scriptsize}\setlength{\tabcolsep}{0.8ex}
+      \begin{tabular}{
+          l|
+          c
+            r@{\,$\pm$\,}l
+            r@{\,$\pm$\,}l
+            rr|
+          c
+            r@{\,$\pm$\,}l
+            r@{\,$\pm$\,}l
+            rrr}
+  \toprule
+        &
+        \multicolumn{7}{c|}{\textsf{BoC (Actor)}}& 
+        \multicolumn{8}{c}{\textsf{BoC (Full)}}\\
+        &\multicolumn{7}{c|}{}&
+        \multicolumn{6}{l}{}&
+        \multicolumn{2}{c}{behaviours} 
+        \\
+       \textsf{Benchmark} &
+       LoC & 
+          \multicolumn{2}{c}{1 core (ms)}&
+          \multicolumn{2}{c}{8 cores (ms)}&
+          cowns& behaviours &
+       LoC &
+          \multicolumn{2}{c}{1 core (ms)}&
+          \multicolumn{2}{c}{8 cores (ms)}&
+          cowns & 1 cown & 2 cowns\\
+        \midrule
+      \input{../artifact/table2_boc_full.tex}
+  ~\\ \bottomrule
+           \end{tabular}
+  \end{scriptsize}
+  \end{table}
+\end{document}
