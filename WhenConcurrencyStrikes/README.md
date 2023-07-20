@@ -29,7 +29,7 @@ Then run the docker image:
 ```
 mkdir artifact
 cd artifact
-docker run -v $PWD:/artifact/outputs -it verona-when
+docker run --cap-add=SYS_NICE -v $PWD:/artifact/outputs -it verona-when
 ```
 This will run Docker with the locally created artifact directory map to `outputs`.  All the scripts below will generate their output in this directory, and hence can be inspected from outside the Docker image.
 
