@@ -40,7 +40,7 @@ RUN git clone https://github.com/ic-slurp/verona-benchmarks.git \
     && cd verona-benchmarks \
     && mkdir build \
     # Note use Commit hash to avoid malleablity
-    && git checkout ba849ca2cbe714b1bf79b39f3b8c80384682a326 \
+    && git checkout 53bd417bf6b7f207b55f34ab4ece6f4e536a4bc9  \
     && cd build \
     && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-12 -DCMAKE_CXX_COMPILER=clang++-12 .. \
     && ninja
@@ -66,6 +66,9 @@ COPY README.md README.md
 
 # Put the existing results into the container.
 COPY results results
+
+# Put the scripts into the container.
+COPY all-*.sh .
 
 ENV SHELL /bin/bash
 CMD /bin/bash

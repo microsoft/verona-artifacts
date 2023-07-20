@@ -33,6 +33,33 @@ docker run --cap-add=SYS_NICE -v $PWD:/artifact/outputs -it verona-when
 ```
 This will run Docker with the locally created artifact directory map to `outputs`.  All the scripts below will generate their output in this directory, and hence can be inspected from outside the Docker image.
 
+From inside the docker image, there is a single script that runs all the benchmarks and analysis below:
+```
+$ ./all-fast.sh
+/artifact /artifact
+Calculating stats
+Running banking scale
+Running Pony on 1 core
+Skipping Pony on 8 cores as we only have 4 physicals cores
+Running boc (full) on 1 core
+Running boc (full) on 8 core
+Running boc (actor) on 1 core
+Running boc (actor) on 8 core
+Running dining philosophers
+.............
+.............
+/artifact/verona-benchmarks/savina /artifact /artifact
+/artifact /artifact
+Loading data
+Plotting data
+Writing output
+/artifact
+```
+This runs everything with a minimal number of iterations.
+Alternatively, you can run the steps of the script individually. 
+
+#### Individual steps
+
 From inside the docker image, to run the Savina benchmarks for both Pony and Verona, run the following command:
 ```
 python3 verona-benchmarks/scripts/run_savina.py -o outputs \
@@ -61,8 +88,6 @@ The final benchmark run is done manually.  This is the Pony Reasonable Banking b
 There is no corresponding requirement for the BoC benchmark, as the Banking example as implemented in BoC automatically satisfies all the requirements. 
 
 To run to the same level of accuracy as the paper, you should increase the number of repeats to 50 for all the scripts above.  This will increase the time taken significantly. This will take roughly 25 times longer to run.
-
-### Generating the graphs and tables
 
 The artifact contains already run benchmarks results, that can be directly used to generate the graphs and tables.  To use the results from the previous section:
 ```
