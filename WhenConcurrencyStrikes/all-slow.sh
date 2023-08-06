@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 pushd /artifact
 
 python3 verona-benchmarks/scripts/run_savina.py -o outputs \
@@ -24,7 +26,7 @@ popd # verona-benchmarks/savina
 
 python3 verona-benchmarks/scripts/produce_table_boc_full.py -i $RESULTS_DIR > outputs/table2_boc_full.tex
 
-python3 verona-benchmarks/scripts/produce_graph_dining.py -i $RESULTS_DIR -o outputs --fast
+python3 verona-benchmarks/scripts/produce_graph_dining.py -i $RESULTS_DIR -o outputs
 python3 verona-benchmarks/scripts/produce_graph_banking_scale.py -i $RESULTS_DIR -o outputs
 
 popd # /artifact
