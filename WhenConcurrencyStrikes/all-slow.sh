@@ -6,12 +6,16 @@ set -e
 
 pushd /artifact
 
+echo "Running Savina (expected duration ~1hr 10mins)"
+
 python3 verona-benchmarks/scripts/run_savina.py -o outputs \
   --verona-path verona-benchmarks/build/savina \
   --pony-path pony-savina/savina-pony \
   --repeats 50
 
 echo Completed Savina at $(date)
+
+echo "Running Dining Philosophers (expected duration ~4hr 10mins)"
 
 python3 verona-benchmarks/scripts/run_dining.py -o outputs \
   --verona-path verona-rt/build/test \
