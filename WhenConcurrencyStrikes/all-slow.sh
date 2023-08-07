@@ -15,7 +15,7 @@ echo Completed Savina at $(date)
 
 python3 verona-benchmarks/scripts/run_dining.py -o outputs \
   --verona-path verona-rt/build/test \
-  --repeats 50
+  --repeats 7
 
 echo Completed Dining Philosophers at $(date)
 
