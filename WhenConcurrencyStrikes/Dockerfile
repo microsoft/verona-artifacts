@@ -6,7 +6,7 @@ RUN apt update \
     && apt upgrade -y \
     && DEBIAN_FRONTEND=noninteractive apt install -y cmake ninja-build \
         llvm-12 clang-12 lld-12 git lsb-release curl sudo pip cloc \
-        linux-tools-5.15.0-76 libc6-dbg 
+        linux-tools-5.15.0-82 libc6-dbg 
 
 # Install Python dependencies
 RUN pip install psutil plotly pandas kaleido

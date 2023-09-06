@@ -169,16 +169,16 @@ docker run --privileged -v $PWD:/artifact/outputs -it verona-when
 
 Then you can run the profiling for a particular benchmark as follows our runtime as follows:
 ```
-sudo /usr/lib/linux-tools-5.15.0-76/perf record verona-benchmarks/build/savina/savina --actor --benchmark "Banking"
+sudo /usr/lib/linux-tools-5.15.0-82/perf record verona-benchmarks/build/savina/savina --actor --benchmark "Banking"
 ```
 and for Pony as follows:
 ```
-sudo /usr/lib/linux-tools-5.15.0-76/perf record pony-savina/savina-pony/savina-pony --benchmark "Banking"
+sudo /usr/lib/linux-tools-5.15.0-82/perf record pony-savina/savina-pony/savina-pony --benchmark "Banking"
 ```
 
 The results can then be viewed with:
 ```
-sudo /usr/lib/linux-tools-5.15.0-76/perf report
+sudo /usr/lib/linux-tools-5.15.0-82/perf report
 ```
 
 ## Relationship to the paper
