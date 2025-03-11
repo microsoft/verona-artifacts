@@ -1,0 +1,14 @@
+# This first part recreates the first part of Figure 3 for line 1-2
+x = Region()
+z = Region()
+z.w = {}
+y = {}
+y.y = z
+
+# This recreates the second part of the paper where the value of y
+# is moevd into the region
+x.y = y
+
+# FrankenScript draws subregions nested inside their parent region. This can
+# be changes with the following built-in function:
+pragma_mermaid_draw_regions_nested(False)

@@ -1,0 +1,13 @@
+# This built-in function enables implicit freezing as described in
+# §5.1 of the paper
+pragma_enable_implicit_freezing()
+
+# This creates the first part for figure 7 before implicit freezing
+x = Region()
+x.b = {}
+x.b.c = {}
+z = x.b.c
+y = Region()
+
+# Creating a reference to `x.b` from `y` will trigger an implicit freeze
+y.b = x.b

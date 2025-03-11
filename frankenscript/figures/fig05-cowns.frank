@@ -1,0 +1,21 @@
+def tree():
+    tree = Region()
+    tree.a = Region()
+    tree.a.a = Region()
+    tree.b = Region()
+    return tree
+
+# This creates the left region tree
+x = Cown(tree())
+
+# This creates the center region tree
+b = tree()
+y = Cown(b)
+
+# This creates the right tree
+z = tree()
+z.cown = y
+z = Cown(move z)
+
+# This will draw the regions as trees:
+pragma_mermaid_draw_regions_nested(False)
