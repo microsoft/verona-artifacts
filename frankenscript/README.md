@@ -13,6 +13,7 @@ This docker container fetches and builds the commit
 [`f62016b`](https://github.com/fxpl/frankenscript/tree/f62016b1a4ae42aa7e4554818734b44f9a8d9519)
 which is available
 on [GitHub](https://github.com/fxpl/frankenscript).
+The code is permanently archived on [Zenodo](https://zenodo.org/records/15040281).
 
 ## Getting Started
 
