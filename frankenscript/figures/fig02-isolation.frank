@@ -1,0 +1,23 @@
+# This creates the region that is visible in the center of Figure 2
+x = Region()
+x.b = "b"
+x.b.c = "c"
+x.b.c.r = x
+
+# This creates the small single region on the right side of the figrue
+x.b.c.r2 = Region()
+
+# This creates the region at the top which is only partially visible
+r1 = Region()
+r1.x = {}
+
+# FrankenScript draws subregions nested inside their parent region. This can
+# be changes with the following built-in function:
+pragma_mermaid_draw_regions_nested(False)
+
+# The following lines would break isolation
+# x.b.c.r2.c = x.b.c # Error
+# x.b.c.r2.c = r1.x # Error
+
+# The following line would break uniqueness
+# r1.r2 = x.b.c.r2 # Error

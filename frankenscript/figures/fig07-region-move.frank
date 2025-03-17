@@ -1,0 +1,16 @@
+# We use strings to model integers -- also makes graphs easier to read
+def int(id):
+    freeze(id)
+    return id
+
+# The code in Figure 7 in the paper using the above helpers
+# We model classes as a prototype object
+Obj = {} 
+x = create(Obj)
+x.g = create(Obj)
+r = Region()
+r.h = x
+x.f = int("7")
+x = None
+
+# Note -- the output also shows some prototypes which weren't in the paper's figure
