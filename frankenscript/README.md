@@ -175,7 +175,7 @@ This section covers some issues you might encounter while building or working wi
     again with this command in Docker:
 
     ```bash
-    sudo chown frankenscript -R /artifact/output
+    sudo chown ubuntu -R /artifact/output
     ```
 
 * **Missing permissions for files created from inside Docker:**
