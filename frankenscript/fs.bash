@@ -28,8 +28,26 @@ if [[ ! -z "$2" ]]; then
     output=$2
 fi
 
-# Run FrankenScript
-/artifact/frankenscript/build/frankenscript build $frankpath --out $tmpmd
+# Make sure the file isn't empty, this is a requirement of frankenscript
+if [ ! -s "$frankpath" ]; then
+    echo " " > $tmpmd
+else
+    # Run FrankenScript
+    /artifact/frankenscript/build/frankenscript build $frankpath --out $tmpmd
+fi
+
+
+# Check if FrankenScript created an output file.
+# If not it probably segfaulted or had a parsing error.
+# We'll use that output instead:
+if [[ ! -f "$tmpmd" ]]; then
+    touch $tmpmd
+    echo "**FrankenScript Failed**" >> $tmpmd
+    echo " " >> $tmpmd
+    echo '```' >> $tmpmd
+    /artifact/frankenscript/build/frankenscript build $frankpath --out $tmpmd &>> $tmpmd
+    echo '```' >> $tmpmd
+fi
 
 echo "### $frankpath" > $output
 echo '```' >> $output
