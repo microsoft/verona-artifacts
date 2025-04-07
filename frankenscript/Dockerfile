@@ -47,4 +47,4 @@ COPY figures/ figures/
 
 # Start bash for user input
 ENV SHELL=/bin/bash
-CMD /bin/bash
+CMD ["/bin/bash"]

@@ -168,6 +168,14 @@ This section covers some issues you might encounter while building or working wi
     You can also invoke all Docker commands as root, that should work just fine
     for FrankenScript.
 
+* **Problems with credentials**
+
+  Building the Docker container can fail due to a missing or incorrectly configured credential helper (`docker-credential-desktop`). This can be caused by the default configuration of the host system. In the past, it has helped to modify `~/.docker/config.json` to delete the following line:
+  
+  ```json
+  "credsStore": "desktop"
+  ```
+
 * **Error when running FrankenScript in Docker:
   "Unable to open output file: /artifact/output/res/XYZ.md"**
 
