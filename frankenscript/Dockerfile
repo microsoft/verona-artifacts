@@ -8,7 +8,7 @@ RUN apt update \
         llvm-15 clang-15 lld-15 git lsb-release curl sudo clang-format \
         vim wget inotify-tools npm libnss3-dev libatk1.0-0 \
         libatk-bridge2.0-0 libxdamage1 libxkbcommon-x11-0 libpangocairo-1.0-0 \
-        libcups2 libasound2-dev pandoc
+        libcups2 libasound2-dev pandoc unzip
 
 # Build the artifact directory
 RUN mkdir artifact \
@@ -22,11 +22,21 @@ WORKDIR /artifact
 # Installation finished
 # ========================
 
-# Build FrankenScript
-RUN git clone https://github.com/fxpl/frankenscript.git \
-    && ln -s ./frankenscript/examples/ ./examples \
-    && cd frankenscript \
-    && git checkout f62016b \
+# Fetch FrankenScript(Zenodo) for PLDI 2025
+# https://doi.org/10.5281/zenodo.15235104
+RUN wget -q --tries=3 -O frankenscript-src.zip https://zenodo.org/records/15235104/files/fxpl/frankenscript-pldi2025v2.zip \
+    && unzip ./frankenscript-src.zip -d /tmp/unzip \
+    && mv /tmp/unzip/* ./frankenscript \
+    && rm ./frankenscript-src.zip \
+    && rm -r /tmp/unzip
+
+# Fetch FrankenScript(GitHub)
+# RUN git clone https://github.com/fxpl/frankenscript.git \
+#    && cd frankenscript \
+#    && git checkout 083925d \
+#    && cd ..
+
+RUN cd frankenscript \
     && mkdir build \
     && cd build \
     && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-15 -DCMAKE_CXX_COMPILER=clang++-15 .. \
@@ -44,6 +54,7 @@ COPY watch.bash watch.bash
 COPY res/head.txt res/head.txt
 COPY res/foot.txt res/foot.txt
 COPY figures/ figures/
+RUN ln -s ./frankenscript/examples/ ./examples
 
 # Start bash for user input
 ENV SHELL=/bin/bash
