@@ -9,11 +9,12 @@ membership in regions, immutable objects, etc. The FrankenScript interpreter
 executes programs line-by-line and outputs a single markdown file with one
 diagram for the state after each line of the program.
 
-This docker container fetches and builds the commit
-[`f62016b`](https://github.com/fxpl/frankenscript/tree/f62016b1a4ae42aa7e4554818734b44f9a8d9519)
-which is available
-on [GitHub](https://github.com/fxpl/frankenscript).
-The code is permanently archived on [Zenodo](https://zenodo.org/records/15040281).
+
+This docker container fetches and builds
+[FrankenScript](https://github.com/fxpl/frankenscript)
+from on [Zenodo](https://doi.org/10.5281/zenodo.15235104).
+The Zenodo link corresponds to the commit
+[`083925d`](https://github.com/fxpl/frankenscript/commit/083925d84d54b33f11da94741c4710947bbbd0e4).
 
 ## Getting Started
 
